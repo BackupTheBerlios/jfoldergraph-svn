@@ -1,0 +1,5 @@
+MAIN-CLASS: de.berlios.jfoldergraph.FolderGraph
+CLASS-PATH: lib/jcommon-1.0.8.jar lib/jfreechart-1.0.4.jar
+
+
+

@@ -1,0 +1,67 @@
+<project name="JFolderGraph" default="info" basedir=".">
+	
+	<target name="info">
+		<echo message="Build.xml for the JFolderGraph-Project"/>
+		<echo message="Please use it like: ant [OPTION]"/>
+		<echo message="Possible [OPTION]s:"/>
+		<echo message="clean       - To clean up the project's directories"/>
+		<echo message="compile     - To compile the sourcefiles"/>
+		<echo message="run         - To run the project (incl. compiling)"/>
+		<echo message="publish     - To build a directory that can be published"/>
+	</target>
+	
+	
+	<target name="clean">
+		<echo message="Cleaning up the project"/>
+		<delete dir="bin" includeEmptyDirs="true"/>
+		<delete dir="JFolderGraph" includeEmptyDirs="true"/>
+	</target>
+	
+	<target name="compile">
+		<mkdir dir="bin"/>
+		<javac srcdir="src" destdir="bin" optimize="true" failonerror="true">
+			<classpath>
+				<fileset dir="lib/">
+					<include name="**/*.jar"/>
+				</fileset>
+    			</classpath>
+		</javac>
+		<copy todir="bin">
+			<fileset dir="src" excludes="**/*.java"/>
+		</copy>
+	</target>
+	
+	<target name="run" depends="compile">
+		<java classname="de.berlios.jfoldergraph.FolderGraph" fork="true">
+			<classpath>
+				<pathelement location="bin/"/>
+				<fileset dir="lib/">
+					<include name="**/*.jar"/>
+				</fileset>
+    			</classpath>
+		</java>
+	</target>
+	
+	<target name="publish" depends="compile">
+		<mkdir dir="JFolderGraph"/>
+		<mkdir dir="JFolderGraph/lib"/>
+		<copy todir="JFolderGraph/lib">
+			<fileset dir="lib/"/>
+		</copy>
+		<mkdir dir="pub_temp"/>
+		<copy todir="pub_temp">
+			<fileset dir="src/">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="bin/"/>
+		</copy>
+		<jar jarfile="JFolderGraph/JFolderGraph.jar" basedir="pub_temp" manifest="scripts/manifest.txt"/>
+		<delete dir="pub_temp" includeEmptyDirs="true"/>
+		<copy todir="JFolderGraph">
+			<fileset dir="." includes="*.txt"/>
+			<fileset dir="scripts/" excludes="**/*.txt"/>
+		</copy>
+		<echo message="You can now publish the directory JFolderGraph"/>
+	</target>
+	
+</project>

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+java -jar -Xmx128M JFolderGraph.jar
+ 
