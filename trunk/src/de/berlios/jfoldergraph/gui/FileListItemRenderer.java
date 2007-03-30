@@ -43,7 +43,7 @@ import de.berlios.jfoldergraph.datastruct.ScannedFile;
 /**
  * This class represent the Entry in the File-List for each ScannedFile
  * in the Mainframe
- * @author sparrow
+ * @author sebmeyer
  */
 public class FileListItemRenderer extends JPanel implements ListCellRenderer, Serializable {
 

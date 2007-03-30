@@ -30,7 +30,7 @@ import de.berlios.jfoldergraph.gui.ProgressDialog;
  * This is the Thread which scans the directories to
  * calculate there size.
  * It runs as a Thread, invoked by the ProgressDialog
- * @author sparrow
+ * @author sebmeyer
  */
 public class ScanThread extends Thread {
 	
@@ -89,6 +89,7 @@ public class ScanThread extends Thread {
 	 * if the cancel-button is pressed
 	 */
 	public void interrup() {
+		System.out.println("ScanThread has got the interrupt-signal");
 		this.isInterrupted=true;
 		scannedFile = null;
 	}
@@ -97,8 +98,10 @@ public class ScanThread extends Thread {
 	 * @see java.lang.Thread#run()
 	 */
 	public void run() {
+		System.out.println("ScanThread has been started...");
 		scannedFile = scan(startFile);
-		parentDialog.setVisible(false);
+		parentDialog.dispose();
+		System.out.println("ScanThread has finished!");
 	}
 	
 	/**
@@ -149,6 +152,13 @@ public class ScanThread extends Thread {
 						if (isInterrupted) { 
 							break;
 						}
+						// Testing childFiles[i] for nullpointer.
+						// Sometimes the OS count files, but there is nothing
+						if (childFiles[i] == null) {
+							System.out.println("Info: Nullpointer while scanning");
+							System.out.println("      File: " + i + " in " + file.getName());
+							continue;
+						}
 						// is the child only a softlink?
 						// when absolute path and canoncial is the same,
 						// it is not link
@@ -157,6 +167,8 @@ public class ScanThread extends Thread {
 							if (childFiles[i].getCanonicalPath().equals(childFiles[i].getAbsolutePath()))
 							sf.addChild(scan(childFiles[i]));
 						} catch (IOException e) {
+							System.out.println("Exception: " + e.getMessage());
+							System.out.println("           While scanning::test for link");
 							e.printStackTrace();
 						}
 					}
@@ -167,9 +179,19 @@ public class ScanThread extends Thread {
 			}
 			return sf;
 		} catch (OutOfMemoryError e) {
+			// All scannin is runnin in a try/catch-Block to make shure no Ou of Memory connection will
+			// bring the program down.
+			// If a OutOfMemory-Exception occures, scanning will be interrupted an and the
+			// "endsWithOOMemoryException" will be set. The caller-dialog should test for the flag and
+			// set the thread to null.
+			// Be carefull: I tested to handle the exception here, but it seems it is not enough to set the
+			// ScannedFile-root-Object to null. But when the Threas-object is set to null all references are
+			// killed.
+			System.out.println("OutOfMemoryException while Scanning! : start to handle exception ... ");
 			this.interrup();
 			this.endsWithOOMemoryException = true;
 			System.gc();
+			System.out.println("OutOfMemoryException while Scanning! : ScanThread interrupted .... ");
 			return new ScannedFile();
 		}
 		

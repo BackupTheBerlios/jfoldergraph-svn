@@ -31,7 +31,7 @@ import javax.swing.AbstractListModel;
  * This ListModel needs to be notified after all new Object
  * are added to it. So the layout must only done one time
  * after all adds... not after ever add. 
- * @author sparrow
+ * @author sebmeyer
  */
 public class FileListModel extends AbstractListModel {
 	

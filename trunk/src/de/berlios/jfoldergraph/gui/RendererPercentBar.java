@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 /**
  * This is the Bar which will be displayed in the File-List at the MainGUI.
  * Its a JPanel with a overwritten paint-method
- * @author sparrow
+ * @author sebmeyer
  */
 public class RendererPercentBar extends JPanel {
 	

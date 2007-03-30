@@ -25,7 +25,7 @@ import de.berlios.jfoldergraph.gui.FolderGraphWindow;
  * This is the main-class of JFolderGraph.
  * Only starting is arranged here, and some static objects
  * are declared
- * @author sparrow
+ * @author sebmeyer
  */
 public class FolderGraph {
 	
@@ -57,7 +57,7 @@ public class FolderGraph {
 	/**
 	 * Should be used to get the Version Suffox like "alpha" or "beta"
 	 */
-	public static final String VERSION_SUFFIX = "beta";
+	public static final String VERSION_SUFFIX = "beta 2";
 
 	/**
 	 * Entey-Methode for the JFolderGraph

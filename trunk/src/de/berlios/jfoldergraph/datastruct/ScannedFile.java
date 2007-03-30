@@ -29,7 +29,7 @@ import java.util.Iterator;
 /**
  * This class represents a directory or file in JFolderGraph.
  * All data will be collected by the scanner (ScanThread.java).
- * @author sparrow
+ * @author sebmeyer
  */
 public class ScannedFile implements Serializable {
 	
@@ -257,7 +257,8 @@ public class ScannedFile implements Serializable {
 	 * @return the percent-size of the file as a part of the parent-directory
 	 */
 	public double getPercentSize() {
-		return (this.getSize() / this.getParent().getSize() * 100);
+		double percent = (((double)this.getSize()) / ((double)this.getParent().getSize()) * ((double)100));
+		return percent;
 	}
 	
 	
@@ -272,9 +273,32 @@ public class ScannedFile implements Serializable {
 	}
 	
 	
+	/**
+	 * Returns the children of the scanned file, sorted by size
+	 * @return the children of the scanned file, sorted by size
+	 */
 	@SuppressWarnings("unchecked")
-	public Iterator<ScannedFile> getSortedChildFiles() {
-		Collections.sort(childFiles, new ScannedFileComperator());
+	public Iterator<ScannedFile> getSortedChildFiles(boolean withFiles) {
+		if (withFiles) {
+			// Let's get all Childs, also the children
+			Collections.sort(childFiles, new ScannedFileComperator());
+		} else {
+			ScannedFile files = new ScannedFile();
+			files.setDirectory(false);
+			files.setFilename("Files in the folder");
+			files.setParent(this);
+			ArrayList<ScannedFile> childsWithoutFiles = new ArrayList<ScannedFile>();
+			for (int i = 0; i < childFiles.size(); i++) {
+				if (childFiles.get(i).isDirectory()) {
+					childsWithoutFiles.add(childFiles.get(i));
+				} else {
+					files.setSize(files.getSize()+childFiles.get(i).getSize());
+				}
+			}
+			childsWithoutFiles.add(files);
+			Collections.sort(childsWithoutFiles, new ScannedFileComperator());
+			return childsWithoutFiles.iterator();
+		}
 		return childFiles.iterator();
 	}
 	
@@ -348,5 +372,6 @@ public class ScannedFile implements Serializable {
 		}
 		this.size = size;
 	}
+	
 	
 }

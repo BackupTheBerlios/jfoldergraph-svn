@@ -39,7 +39,7 @@ import de.berlios.jfoldergraph.FolderGraph;
 
 /**
  * This Window will be shown as "about"-frame
- * @author sparrow
+ * @author sebmeyer
  *
  */
 public class AboutFrame extends JDialog {

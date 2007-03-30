@@ -32,7 +32,7 @@ import javax.swing.JPanel;
 /**
  * This is a little helpfull class to create a button from an imageicon.
  * It react on mouseinvents and can be used to make a iconbars, etc.
- * @author sparrow
+ * @author sebmeyer
  * @version 0.1
  */
 public class IconButton extends JPanel {

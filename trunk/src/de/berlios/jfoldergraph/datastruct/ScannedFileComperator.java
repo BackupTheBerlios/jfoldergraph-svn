@@ -25,7 +25,7 @@ import java.util.Comparator;
 /**
  * This Comperator will be used to sort the ScannedFile-Objects
  * by size. It use: Double.compareTo(Double)
- * @author sparrow
+ * @author sebmeyer
  */
 public class ScannedFileComperator implements Comparator {
 

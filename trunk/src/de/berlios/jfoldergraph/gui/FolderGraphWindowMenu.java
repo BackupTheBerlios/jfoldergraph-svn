@@ -31,7 +31,7 @@ import de.berlios.jfoldergraph.FolderGraph;
 
 /**
  * This is the Menu in the main-frame
- * @author sparrow
+ * @author sebmeyer
  */
 public class FolderGraphWindowMenu extends JMenuBar {
 	

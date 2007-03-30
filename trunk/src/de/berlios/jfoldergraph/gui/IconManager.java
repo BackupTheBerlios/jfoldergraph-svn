@@ -24,7 +24,7 @@ import javax.swing.ImageIcon;
 /**
  * This is the icon-Manager wich contains all the
  * Icons which can be used in the program
- * @author sparrow
+ * @author sebmeyer
  *
  */
 public class IconManager {

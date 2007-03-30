@@ -34,8 +34,11 @@ import de.berlios.jfoldergraph.gui.MyFileFilter;
 
 
 /**
- * This is the JFolderGraphController
- * @author sparrow
+ * This is the JFolderGraphController.
+ * It should be the basic of the project with all methods which should be accesable from
+ * everywheres.
+ * It is referenced as an static object in the class JFodlerGraph as controller
+ * @author sebmeyer
  */
 public class FolderGraphController {
 	

@@ -1,4 +1,4 @@
 #!/bin/bash
 
-java -jar -Xmx128M JFolderGraph.jar
+java -jar -Xmx128M JFolderGraph.jar > JFolderGraphLog.log
  

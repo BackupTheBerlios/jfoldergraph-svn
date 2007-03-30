@@ -30,7 +30,7 @@ import de.berlios.jfoldergraph.FolderGraph;
 
 /**
  * This Class displays the "Help-Window"
- * @author sparrow
+ * @author sebmeyer
  */
 public class HelpWindow extends JFrame {
 

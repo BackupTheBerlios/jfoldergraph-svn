@@ -34,7 +34,7 @@ import de.berlios.jfoldergraph.datastruct.ScannedFile;
 /**
  * This is the File-Information-Panel in the
  * Main-Window
- * @author sparrow
+ * @author sebmeyer
  */
 public class FileInfoPanel extends JPanel {
 	

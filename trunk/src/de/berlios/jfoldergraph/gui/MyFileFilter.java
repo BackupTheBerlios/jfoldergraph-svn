@@ -27,7 +27,7 @@ import javax.swing.filechooser.FileFilter;
  * This is only a little FileFilter which will be
  * used in the dialog for saving and open the
  * project
- * @author sparrow
+ * @author sebmeyer
  */
 public class MyFileFilter extends FileFilter {
 

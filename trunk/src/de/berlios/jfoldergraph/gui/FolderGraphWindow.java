@@ -58,7 +58,7 @@ import de.berlios.jfoldergraph.datastruct.ScannedFile;
 
 /**
  * This is the main window, with it's integrated panels
- * @author sparrow
+ * @author sebmeyer
  */
 public class FolderGraphWindow extends JFrame {
 	
@@ -432,6 +432,27 @@ public class FolderGraphWindow extends JFrame {
     
     
     /**
+	 * Updates the the graph on the display.
+	 * @param sf The ScannedFile which should be displayed
+	 */
+	private void updateGraphView(ScannedFile sf) {
+		// Removing all data from Graph
+		dataset.clear();
+		Iterator<ScannedFile> it = sf.getSortedChildFiles(true);
+		while (it.hasNext()) {
+			String type = "";
+			if (sf.isDirectory()) {
+				type = "[D]";
+			} else {
+				type = "[F]";
+			}
+			ScannedFile sfc = it.next();
+			dataset.setValue(sfc.getFilename() + " " + type + " (" + sfc.getHumanReadableSISize() + ")  " + sfc.getPercentSize(), sfc.getPercentSize());
+		}
+	}
+
+	
+	/**
 	 * This Method should be called to inform the MainGUI to update for
 	 * a new ScannedFile. It will be called after a scan or when a subdirectory
 	 * has entered
@@ -439,23 +460,33 @@ public class FolderGraphWindow extends JFrame {
 	 * @throws  
 	 */
 	public void updateGUIForNewScan(ScannedFile sf) {
-		// Removing all entries of the list and the chart
-		FileListModel model = (FileListModel) fileList.getModel();
-		model.removeAllElements();
-		dataset.clear();
-		// adding the entries to the lists
-		Iterator<ScannedFile> it = sf.getSortedChildFiles();
-		while (it.hasNext()) {
-			ScannedFile sfc = it.next();
-			model.addElement(sfc);
-			dataset.setValue(sfc.getFilename() + " [" + sfc.getHumanReadableSISize() + "]", sfc.getPercentSize());
-		}
 		// Setting datafields
 		this.currentDirectory.setText(sf.getPath());
 		this.currentDisplayedScannedFile = sf;
 		this.currentInfoPanel.setDisplayedScannedFile(sf);
-		// Nor notify the FileList
+		// Updating screen
+		updateListView(sf);
+		updateGraphView(sf);
+	}
+	
+	
+	/**
+	 * Updates the the List on the display.
+	 * @param sf The ScannedFile which should be displayed
+	 */
+	private void updateListView(ScannedFile sf) {
+		// Removing all entries of the list
+		FileListModel model = (FileListModel) fileList.getModel();
+		model.removeAllElements();
+		// adding the entries to the lists
+		Iterator<ScannedFile> it = sf.getSortedChildFiles(true);
+		while (it.hasNext()) {
+			ScannedFile sfc = it.next();
+			model.addElement(sfc);
+		}
+		// Now notify the FileList
 		model.fireEntryChanged();
 	}
+	
 
 }

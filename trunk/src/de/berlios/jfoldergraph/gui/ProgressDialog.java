@@ -24,6 +24,8 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -44,7 +46,7 @@ import de.berlios.jfoldergraph.datastruct.ScannedFile;
  * This is only the visible side of the scanning, the real scan
  * will be performed by the ScanThread which will be created and
  * invoked by this.
- * @author sparrow
+ * @author sebmeyer
  */
 public class ProgressDialog extends JDialog {
 	
@@ -82,6 +84,18 @@ public class ProgressDialog extends JDialog {
 	 */
 	public ProgressDialog(File startFile) {
 		this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		// WindowListener to interrup the Thread when the window is closing by WindowManager
+		this.addWindowListener(new WindowListener() {
+			public void windowActivated(WindowEvent e) {}
+			public void windowClosed(WindowEvent e) {}
+			public void windowClosing(WindowEvent e) {
+				performCancelPressed();	
+			}
+			public void windowDeactivated(WindowEvent e) {}
+			public void windowDeiconified(WindowEvent e) {}
+			public void windowIconified(WindowEvent e) {}
+			public void windowOpened(WindowEvent e) {}
+		});
 		this.setModal(true);
 		this.startFile = startFile;
 		createGUI();
@@ -132,12 +146,14 @@ public class ProgressDialog extends JDialog {
 			return null;
 		}
 		if (thread.endsWithOOMemoryException) {
+			System.out.println("OutOfMemoryException while Scanning! : ParentDirectory trys to handle .... ");
 			thread = null;
 			System.gc();
 			JOptionPane.showMessageDialog(this, 
 					"<html>An \"Out of memory-Exception\" occures!<br>Please start the JVM with more memory." +
 					"<br>See 'Menu->Help->Help' for more informations", "Out of memory", 
 					JOptionPane.ERROR_MESSAGE);
+			System.out.println("OutOfMemoryException while Scanning! : All done and exception was catched. Alive again.");
 			return null;
 		}
 		return thread.getScannedFile();
