@@ -56,6 +56,17 @@ public class RendererPercentBar extends JPanel {
 		this.setPreferredSize(dim);
 	}
 	
+	/**
+	 * Constructer which will define the maximum size of the
+	 * panel 
+	 */
+	public RendererPercentBar(int width, int height) {
+		Dimension dim = new Dimension(width, height);
+		this.setMinimumSize(dim);
+		this.setMaximumSize(dim);
+		this.setPreferredSize(dim);
+	}
+	
 	
 	/** 
 	 * The overwritten paint-method to paint the
@@ -66,11 +77,11 @@ public class RendererPercentBar extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.setColor(Color.LIGHT_GRAY);
-		g.fillRect(0, 0, 100, 15);
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		g.setColor(Color.BLACK);
-		g.drawRect(0, 0, 100, 15);
+		g.drawRect(0, 0, this.getWidth(), this.getHeight());
 		g.setColor(Color.BLUE);
-		g.fillRect(1, 1, value, 14);
+		g.fillRect(1, 1, (int)((double)this.getWidth() / (double)100 * (double)value), this.getHeight() - 1);
 	}
 	
 	

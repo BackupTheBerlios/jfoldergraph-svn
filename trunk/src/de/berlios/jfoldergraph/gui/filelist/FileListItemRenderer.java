@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package de.berlios.jfoldergraph.gui;
+package de.berlios.jfoldergraph.gui.filelist;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -37,6 +37,8 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import de.berlios.jfoldergraph.datastruct.ScannedFile;
+import de.berlios.jfoldergraph.gui.IconManager;
+import de.berlios.jfoldergraph.gui.RendererPercentBar;
 
 
 

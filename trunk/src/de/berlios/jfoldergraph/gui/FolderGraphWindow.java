@@ -20,7 +20,6 @@
 package de.berlios.jfoldergraph.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -29,31 +28,22 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
-import java.util.Iterator;
 import java.util.zip.GZIPOutputStream;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PiePlot;
-import org.jfree.data.general.DefaultPieDataset;
 
 import de.berlios.jfoldergraph.datastruct.ScannedFile;
+import de.berlios.jfoldergraph.gui.filelist.ClassicFileListPanel;
+import de.berlios.jfoldergraph.gui.piechart.PieChartPanel;
+import de.berlios.jfoldergraph.gui.treeview.TreeViewPanel;
 
 
 /**
@@ -68,51 +58,31 @@ public class FolderGraphWindow extends JFrame {
 	private static final long serialVersionUID = 4426940537269141174L;
 	
 	/**
-	 * Will show the current directory in the main window 
-	 */
-	private JTextField currentDirectory;
-	
-	/**
 	 * Contains the actual displayed ScannedFile
 	 */
-	private ScannedFile currentDisplayedScannedFile;
+	private ScannedFile actualProject;
 	
 	/**
-	 * Contains the fileInfoPanel which shows some informationsa
-	 * about the current active file
+	 * Will contain the Panel which displays the graph
 	 */
-	private FileInfoPanel currentInfoPanel = new FileInfoPanel("Some informations about the current file");
+	private GraphPanel graphPanel;
 	
 	/**
-	 * Contains the dataset for the chart
+	 * Contains the view of the leftPanel
 	 */
-	private DefaultPieDataset dataset = new DefaultPieDataset();
-	
-	/**
-	 * Contains the fileInfoPanel which shows some informationsa
-	 * about the selected file
-	 */
-	private FileInfoPanel fileInfoPanel = new FileInfoPanel("Some informations about the selected file");
-	
-	/**
-	 * The FileList in the main window
-	 */
-	private JList fileList;
-	
-	/**
-	 * The left Panel in the splitted pane in the main Window
-	 */
-	private JPanel leftPanel;
-	
+	private LeftPanel leftPanelContainer;
+
 	/**
 	 * The pane which contains the splitted pain in the main window
 	 */
 	private JSplitPane mainPane;
 	
 	/**
-	 * The Button to open a folder, in the left panel
+	 * Should contain the info Panel which canis be displayed on the right side below
+	 * the Graph
 	 */
-	private JButton openFolderButton;
+	private JPanel rightInfoPanel;
+	
 	
 	/**
 	 * Constructor which calls all needed methods to set the
@@ -135,90 +105,33 @@ public class FolderGraphWindow extends JFrame {
 		this.setVisible(true);
 	}
 	
-	
-	/**
-     * Creates the Chart
-     * @param dataset The dataset for the chart
-     * @return The chart
-     */
-    private JFreeChart createChart(DefaultPieDataset dataset) {
-        JFreeChart chart = ChartFactory.createPieChart(
-            "Folder overview",  // chart title
-            dataset,             // data
-            false,               // include legend
-            true,
-            false
-        );
 
-        PiePlot plot = (PiePlot) chart.getPlot();
-        plot.setSectionOutlinesVisible(false);
-        plot.setLabelFont(new Font("SansSerif", Font.PLAIN, 12));
-        plot.setNoDataMessage("No data available");
-        plot.setCircular(true);
-        plot.setLabelGap(0.02);
-        return chart;
-        
-    }
-	
-	
-	/**
-	 * This creates the Panel which contains the chart
-	 * @return
-	 */
-	private JPanel createChartPanel() {
-		JFreeChart chart = createChart(dataset);
-		return new ChartPanel(chart);
-	}
-	
-	
-	/**
+    /**
 	 * Creates the left panel with the list of files
 	 * @return The left panel
 	 */
 	private JPanel createLeftPanel() {
-		// Creating left Panel
-		leftPanel = new JPanel();
-		leftPanel.setLayout(new BorderLayout());
-		// Creating leftNorth Panel with directory info
-		JPanel leftNorth = new JPanel();
-		leftNorth.setLayout(new BorderLayout());
-		leftNorth.add(new JLabel("Current Folder:", JLabel.CENTER), BorderLayout.NORTH);
-		currentDirectory = new JTextField();
-		currentDirectory.setEditable(false);
-		leftNorth.add(currentDirectory, BorderLayout.CENTER);
-		IconButton folderUpButton = new IconButton(new ImageIcon(this.getClass().getResource("icons/folder_up.png")));
-		folderUpButton.setToolTipText("Change to parent folder");
-		folderUpButton.addActionListener(new ActionListener() {
+		final JPanel panel = new JPanel();
+		// The Panel which will contain the left Panel with the file list
+		panel.setLayout(new BorderLayout());
+		leftPanelContainer = new ClassicFileListPanel(this);
+		panel.add(leftPanelContainer, BorderLayout.CENTER);
+		// This Panel contains a List to choice the displayed list
+		JPanel listChoicePanel = new JPanel();
+		listChoicePanel.setBorder(BorderFactory.createEtchedBorder());
+		listChoicePanel.add(new JLabel("List-Type:", JLabel.RIGHT));
+		final JComboBox choiceBox = new JComboBox();
+		choiceBox.setEditable(false);
+		choiceBox.addItem("Classic List");
+		choiceBox.addItem("Tree View");
+		choiceBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				performFolderUp();
+				listTypeChanged(panel, choiceBox.getSelectedIndex());
 			}
 		});
-		leftNorth.add(folderUpButton, BorderLayout.EAST);
-		leftPanel.add(leftNorth, BorderLayout.NORTH);
-		// Creating leftCenter Panel with File list
-		fileList = new JList(new FileListModel());
-		fileList.setCellRenderer(new FileListItemRenderer());
-		fileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		fileList.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				performListSelectionChanged();
-			}
-		});
-		JScrollPane scrollPane = new JScrollPane(fileList);
-		leftPanel.add(scrollPane, BorderLayout.CENTER);
-		//  Creating the south panel with the buttons
-		JPanel southPanel = new JPanel();
-		openFolderButton = new JButton("Open Directory");
-		openFolderButton.setEnabled(false);
-		openFolderButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				performOpenFolder();
-			}
-		});
-		southPanel.add(openFolderButton);
-		leftPanel.add(southPanel, BorderLayout.SOUTH);
-		
-		return leftPanel;
+		listChoicePanel.add(choiceBox);
+		panel.add(listChoicePanel, BorderLayout.SOUTH);
+		return panel;
 	}
 	
 	
@@ -232,7 +145,7 @@ public class FolderGraphWindow extends JFrame {
 		panel.setLayout(layout);
 		GridBagConstraints gbc;
 		
-		// Adding the chart
+		graphPanel = new PieChartPanel(this);
 		gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = 1;
@@ -241,11 +154,10 @@ public class FolderGraphWindow extends JFrame {
 		gbc.weightx = 100;
 		gbc.weighty = 100;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		JPanel chartPanel = this.createChartPanel();
-		layout.setConstraints(chartPanel, gbc);
-		panel.add(chartPanel);
-
-		// Adding the FileInfoPanel for the current file
+		layout.setConstraints(graphPanel, gbc);
+		panel.add(graphPanel);
+		
+		// Adding the InfoPanel to the right Panel
 		gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = 2;
@@ -255,23 +167,59 @@ public class FolderGraphWindow extends JFrame {
 		gbc.weighty = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.anchor = GridBagConstraints.SOUTHWEST;
-		layout.setConstraints(currentInfoPanel, gbc);
-		panel.add(currentInfoPanel);
-		
-		// Adding the FileInfoPanel for the selected file
-		gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 3;
-		gbc.gridheight = 1;
-		gbc.gridwidth = 1;
-		gbc.weightx = 100;
-		gbc.weighty = 0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.anchor = GridBagConstraints.SOUTHWEST;
-		layout.setConstraints(fileInfoPanel, gbc);
-		panel.add(fileInfoPanel);
+		rightInfoPanel = new JPanel();
+		layout.setConstraints(rightInfoPanel, gbc);
+		panel.add(rightInfoPanel);
 		
 		return panel;
+	}
+	
+	
+	
+	/**
+	 * Get the InfoPanel on the right side which is displayed below the
+	 * Graph
+	 * @return the InfoPanel on the right side which is displayed below the
+	 */
+	public JPanel getRightInfoPanel() {
+		return this.rightInfoPanel;
+	}
+	
+    
+    /**
+	 * Returns the root of the actual project
+	 * @return the root of the actual project
+	 */
+	public ScannedFile getRootOfTheProject() {
+		return this.actualProject;
+	}
+
+	
+	/**
+	 * Will be called when the slection of the list-type
+	 * has been changed
+	 */
+	private void listTypeChanged(JPanel panel, int index) {
+		panel.invalidate();
+		ScannedFile currentDisplayedFile = leftPanelContainer.getCurrentDisplayedFile();
+		panel.remove(leftPanelContainer);
+		leftPanelContainer = null;
+		// leftPanelContainer.removeAll();
+		switch (index) {
+		case 0:
+			leftPanelContainer = new ClassicFileListPanel(this);
+			break;
+		case 1:
+			leftPanelContainer = new TreeViewPanel(this);
+			break;
+		}
+		if (currentDisplayedFile != null) {
+			leftPanelContainer.updateListView(currentDisplayedFile);
+		} else {
+			leftPanelContainer.updateListView(this.getRootOfTheProject());
+		}
+		panel.add(leftPanelContainer, BorderLayout.CENTER);
+		panel.validate();
 	}
 	
 	
@@ -287,35 +235,6 @@ public class FolderGraphWindow extends JFrame {
 		
 		return mainPane;
 	}
-	
-	
-	/**
-	 * Will be called to change to the parent's folder on the FileList
-	 */
-	private void performFolderUp() {
-		if (this.currentDisplayedScannedFile == null) {
-			JOptionPane.showMessageDialog(this, "There is no actual project.", "Failed", JOptionPane.INFORMATION_MESSAGE);
-		} else if (this.currentDisplayedScannedFile.getParent() == null) {
-			JOptionPane.showMessageDialog(this, "Sorry, you can not change to a folder \"above\" the folder you scanned.", "Failed", JOptionPane.INFORMATION_MESSAGE);
-		} else {
-			this.updateGUIForNewScan(this.currentDisplayedScannedFile.getParent());
-		}
-	}
-	
-    
-	/**
-     * Will be called if the selection of the FileList has
-     * been changed
-     */
-    private void performListSelectionChanged() {
-    	if (fileList.getSelectedIndex() >=0  ) {
-    		ScannedFile sf = (ScannedFile) fileList.getSelectedValue();
-    		fileInfoPanel.setDisplayedScannedFile(sf);
-    		openFolderButton.setEnabled(sf.isDirectory());
-    	} else {
-    		fileInfoPanel.setDisplayedScannedFile(null);
-    	}
-    }
 	
 	
 	/**
@@ -351,7 +270,10 @@ public class FolderGraphWindow extends JFrame {
 				ProgressDialog pgd = new ProgressDialog(choosenFile);
 				pgd.setVisible(true);
 				ScannedFile scanResult = pgd.getScanResult();
+				pgd.dispose();
+				pgd = null;
 				// Scanned... now let us show it in the GUI
+				actualProject = scanResult;
 				if (scanResult != null) {
 					updateGUIForNewScan(scanResult);
 				}
@@ -362,27 +284,11 @@ public class FolderGraphWindow extends JFrame {
 	
 	
 	/**
-	 * Will be called to open an subfolder, by clicking "open folder" in the mainframe
-	 */
-	private void performOpenFolder() {
-		if (fileList.getSelectedIndex() >= 0) {
-			ScannedFile sf = (ScannedFile) fileList.getSelectedValue();
-			if (sf.isDirectory()) {
-				this.updateGUIForNewScan(sf);
-			} else {
-				JOptionPane.showMessageDialog(this, "The selected item is not a directory", "Failed", JOptionPane.INFORMATION_MESSAGE);
-			}
-		}
-	}
-	
-	
-	
-    /**
 	 * This should be called to save the current project
 	 */
 	public void performSaveProject() {
 		// First we should test for a current project
-		if (this.currentDisplayedScannedFile == null) {
+		if (actualProject == null) {
 			JOptionPane.showMessageDialog(this, "It seems there is no active project", "Can't save", JOptionPane.ERROR_MESSAGE);
 		} else {
 			// Let the user choose a file to save in
@@ -408,7 +314,7 @@ public class FolderGraphWindow extends JFrame {
 					}
 					if (saveFlag) {
 						// Searching the "highest" ScannedFile Object in the Project to save it
-						ScannedFile topScannedFile = this.currentDisplayedScannedFile;
+						ScannedFile topScannedFile = actualProject;
 						while (topScannedFile.getParent() != null) {
 							topScannedFile = topScannedFile.getParent();
 						}
@@ -429,28 +335,27 @@ public class FolderGraphWindow extends JFrame {
 			}
 		}
 	}
-    
-    
-    /**
+	
+	
+	/**
+	 * Set the actual Project
+	 * @param sf The actual project
+	 */
+	public void setActualProject(ScannedFile sf) {
+		this.actualProject = sf;
+	}
+	
+	
+	/**
 	 * Updates the the graph on the display.
 	 * @param sf The ScannedFile which should be displayed
 	 */
-	private void updateGraphView(ScannedFile sf) {
-		// Removing all data from Graph
-		dataset.clear();
-		Iterator<ScannedFile> it = sf.getSortedChildFiles(true);
-		while (it.hasNext()) {
-			String type = "";
-			if (sf.isDirectory()) {
-				type = "[D]";
-			} else {
-				type = "[F]";
-			}
-			ScannedFile sfc = it.next();
-			dataset.setValue(sfc.getFilename() + " " + type + " (" + sfc.getHumanReadableSISize() + ")  " + sfc.getPercentSize(), sfc.getPercentSize());
+	public void updateGraphView(ScannedFile sf) {
+		if (sf != null) {
+			graphPanel.updateGraphView(sf);
 		}
 	}
-
+	
 	
 	/**
 	 * This Method should be called to inform the MainGUI to update for
@@ -460,10 +365,6 @@ public class FolderGraphWindow extends JFrame {
 	 * @throws  
 	 */
 	public void updateGUIForNewScan(ScannedFile sf) {
-		// Setting datafields
-		this.currentDirectory.setText(sf.getPath());
-		this.currentDisplayedScannedFile = sf;
-		this.currentInfoPanel.setDisplayedScannedFile(sf);
 		// Updating screen
 		updateListView(sf);
 		updateGraphView(sf);
@@ -475,18 +376,9 @@ public class FolderGraphWindow extends JFrame {
 	 * @param sf The ScannedFile which should be displayed
 	 */
 	private void updateListView(ScannedFile sf) {
-		// Removing all entries of the list
-		FileListModel model = (FileListModel) fileList.getModel();
-		model.removeAllElements();
-		// adding the entries to the lists
-		Iterator<ScannedFile> it = sf.getSortedChildFiles(true);
-		while (it.hasNext()) {
-			ScannedFile sfc = it.next();
-			model.addElement(sfc);
+		if (sf != null) {
+			leftPanelContainer.updateListView(sf);
 		}
-		// Now notify the FileList
-		model.fireEntryChanged();
 	}
-	
 
 }

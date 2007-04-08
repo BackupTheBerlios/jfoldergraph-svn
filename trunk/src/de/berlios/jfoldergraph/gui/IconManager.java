@@ -32,21 +32,46 @@ public class IconManager {
 	/**
 	 * Contains the Icon for the File.
 	 */
-	public static final ImageIcon FILE_ICON = new ImageIcon(FileListItemRenderer.class.getResource("icons/mime_txt.png"));
+	public static final ImageIcon FILE_ICON = new ImageIcon(IconManager.class.getResource("icons/mime_txt.png"));
+	
+	/**
+	 * Contains the small Icon for the File.
+	 */
+	public static final ImageIcon SMALL_FILE_ICON = new ImageIcon(IconManager.class.getResource("icons/mime_txt_small.png"));
 	
 	/**
 	 * Contains the Icon for the green Folder.
 	 */
-	public static final ImageIcon GREEN_FOLDER_ICON = new ImageIcon(FileListItemRenderer.class.getResource("icons/folder_green.png"));
+	public static final ImageIcon GREEN_FOLDER_ICON = new ImageIcon(IconManager.class.getResource("icons/folder_green.png"));
+	
+	/**
+	 * Contains the small Icon for the green Folder.
+	 */
+	public static final ImageIcon SMALL_GREEN_FOLDER_ICON = new ImageIcon(IconManager.class.getResource("icons/folder_green_small.png"));
 	
 	/**
 	 * Contains the Icon for the orange Folder.
 	 */
-	public static final ImageIcon ORANGE_FOLDER_ICON = new ImageIcon(FileListItemRenderer.class.getResource("icons/folder_orange.png"));
+	public static final ImageIcon ORANGE_FOLDER_ICON = new ImageIcon(IconManager.class.getResource("icons/folder_orange.png"));
+	
+	/**
+	 * Contains the small Icon for the orange Folder.
+	 */
+	public static final ImageIcon SMALL_ORANGE_FOLDER_ICON = new ImageIcon(IconManager.class.getResource("icons/folder_orange_small.png"));
 	
 	/**
 	 * Contains the Icon for the red Folder.
 	 */
-	public static final ImageIcon RED_FOLDER_ICON = new ImageIcon(FileListItemRenderer.class.getResource("icons/folder_red.png"));
+	public static final ImageIcon RED_FOLDER_ICON = new ImageIcon(IconManager.class.getResource("icons/folder_red.png"));
+	
+	/**
+	 * Contains the small Icon for the red Folder.
+	 */
+	public static final ImageIcon SMALL_RED_FOLDER_ICON = new ImageIcon(IconManager.class.getResource("icons/folder_red_small.png"));
+	
+	/**
+	 * Contains the Icon for the Folder-Up-Button
+	 */
+	public static final ImageIcon FOLDER_UP_ICON = new ImageIcon(IconManager.class.getResource("icons/folder_up.png"));
 	
 }

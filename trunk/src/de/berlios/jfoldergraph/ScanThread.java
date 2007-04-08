@@ -144,7 +144,7 @@ public class ScanThread extends Thread {
 				// We should test for opening and reading the directory
 				// If it is not readable we can not count the filesize in it and we
 				// should make it visible tot the user
-				if (file.canRead()) {
+				if (file.canRead() && file.listFiles() != null) {
 					File[] childFiles = file.listFiles();
 					// Be Carefull: Somentimes File.listFiles returns null.
 					//              -> Must be checked!

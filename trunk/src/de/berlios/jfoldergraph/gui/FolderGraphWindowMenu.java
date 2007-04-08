@@ -75,8 +75,8 @@ public class FolderGraphWindowMenu extends JMenuBar {
 		});
 		menu.add(helpItem);
 		menu.addSeparator();
-		JMenuItem infoItem = new JMenuItem("Info");
-		infoItem.setMnemonic('i');
+		JMenuItem infoItem = new JMenuItem("About");
+		infoItem.setMnemonic('a');
 		infoItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				performShowAboutFrame();	

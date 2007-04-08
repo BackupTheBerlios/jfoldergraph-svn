@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package de.berlios.jfoldergraph.gui;
+package de.berlios.jfoldergraph.gui.filelist;
 
 import java.util.Vector;
 
@@ -30,7 +30,7 @@ import javax.swing.AbstractListModel;
  * expensive and much to slow.<br>
  * This ListModel needs to be notified after all new Object
  * are added to it. So the layout must only done one time
- * after all adds... not after ever add. 
+ * after all adds... not after every add. 
  * @author sebmeyer
  */
 public class FileListModel extends AbstractListModel {

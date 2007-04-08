@@ -155,6 +155,35 @@ public class ScannedFile implements Serializable {
 	
 	
 	/**
+	 * To get one of the child filds. Index is will be sorted by size
+	 * @param index The index of the childFile
+	 * @return a childFile
+	 */
+	public ScannedFile getChildAt(int index) {
+		Iterator<ScannedFile> it = this.getSortedChildFiles(true);
+		for (int i = 0; i < this.getChildCount(); i++) {
+			ScannedFile sf = it.next();
+			if (i == index) {
+				return sf;
+			}
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * The count of child files
+	 * @return The count of child files
+	 */
+	public int getChildCount() {
+		if (childFiles == null) {
+			return 0;
+		}
+		return childFiles.size();
+	}
+	
+	
+	/**
 	 * Returns the count of all files "under" this file
 	 * @return the count of all files "under" this file
 	 */
@@ -182,6 +211,7 @@ public class ScannedFile implements Serializable {
 	}
 	
 	
+
 	/**
 	 * To get the Filename
 	 * @return The Filename
@@ -208,7 +238,6 @@ public class ScannedFile implements Serializable {
 	}
 	
 	
-
 	/**
 	 * To get the size of the file in a human-readable form with the SI prefix.
 	 * @return This size of the File in a human-readable form
@@ -223,6 +252,23 @@ public class ScannedFile implements Serializable {
 		}
 		DecimalFormat df = new DecimalFormat("#,##0.##");
 		return (df.format(value) + " " + types[count]);
+	}
+	
+	
+	/**
+	 * Get the index of a child
+	 * @param child The child which index you are looking for
+	 * @return the index of the child
+	 */
+	public int getIndexOfChild(ScannedFile child) {
+		Iterator<ScannedFile> it = this.getSortedChildFiles(true);
+		for (int i = 0; i < this.getChildCount(); i++) {
+			ScannedFile sf = it.next();
+			if (sf == child) {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	
@@ -251,12 +297,35 @@ public class ScannedFile implements Serializable {
 	
 	
 	/**
+	 * Returns all elements from root to this ScannedFile. 
+	 * @return all elements from root to this ScannedFile.
+	 */
+	public Object[] getPathFromRoot() {
+		ArrayList<ScannedFile> list = new ArrayList<ScannedFile>();
+		ScannedFile sf = this;
+		list.add(sf);
+		while (sf.getParent() != null) {
+			sf = sf.getParent();
+			list.add(sf);
+		}
+		ArrayList<ScannedFile> reverseList = new ArrayList<ScannedFile>();
+		for (int i = list.size() - 1; i >= 0; i--) {
+			reverseList.add(list.get(i));
+		}
+		return reverseList.toArray();
+	}
+	
+	
+	/**
 	 * Returns the percent-size of the file as a part of the parent-directory.<br>
 	 * If the parent directory has a size if 20byte and this file has a size of
 	 * 15 byte the retun will be 75% 
 	 * @return the percent-size of the file as a part of the parent-directory
 	 */
 	public double getPercentSize() {
+		if (this.parent == null) {
+			return 100;
+		}
 		double percent = (((double)this.getSize()) / ((double)this.getParent().getSize()) * ((double)100));
 		return percent;
 	}
@@ -285,8 +354,7 @@ public class ScannedFile implements Serializable {
 		} else {
 			ScannedFile files = new ScannedFile();
 			files.setDirectory(false);
-			files.setFilename("Files in the folder");
-			files.setParent(this);
+			files.setFilename("Files in this folder");
 			ArrayList<ScannedFile> childsWithoutFiles = new ArrayList<ScannedFile>();
 			for (int i = 0; i < childFiles.size(); i++) {
 				if (childFiles.get(i).isDirectory()) {
@@ -295,7 +363,10 @@ public class ScannedFile implements Serializable {
 					files.setSize(files.getSize()+childFiles.get(i).getSize());
 				}
 			}
-			childsWithoutFiles.add(files);
+			files.setParent(this);
+			if (files.getSize() > 0) {
+				childsWithoutFiles.add(files);
+			}
 			Collections.sort(childsWithoutFiles, new ScannedFileComperator());
 			return childsWithoutFiles.iterator();
 		}
@@ -318,7 +389,6 @@ public class ScannedFile implements Serializable {
 	public void setDirectory(boolean isDirectory) {
 		this.isDirectory = isDirectory;
 	}
-	
 	
 	/**
 	 * Set the errorlevel of the file, which should be one of the static
@@ -350,6 +420,7 @@ public class ScannedFile implements Serializable {
 		this.parent = parent;
 	}
 	
+	
 	/**
 	 * Set the path
 	 * @param path The path of the ScannedFile
@@ -357,6 +428,7 @@ public class ScannedFile implements Serializable {
 	public void setPath(String path) {
 		this.path = path;
 	}
+	
 	
 	/**
 	 * Set the size of the ScannedFile
@@ -372,6 +444,5 @@ public class ScannedFile implements Serializable {
 		}
 		this.size = size;
 	}
-	
 	
 }

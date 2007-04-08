@@ -46,7 +46,8 @@ public class HelpWindow extends JFrame {
 		"2. How can I start a scan?<br>" +
 		"3. What is the difference between green, red and orange folders?<br>" +
 		"4. How can I save and open a project?<br>" +
-		"5. What should I do when a \"Out of Memory-Exception\" occures?</b><br><br>" +
+		"5. What happens with Links?<br>" +
+		"6. What should I do when a \"Out of Memory-Exception\" occures?</b><br><br>" +
 		"<u><b><i>1. What is " + FolderGraph.PROGRAM_NAME + "</u></b></i><br>" +
 		FolderGraph.PROGRAM_NAME + " is a little tool which can help you to find hidden big files or directories. It shows the size of " +
 		"a directory and all the files in it in a chart.<br>It is also possible to save a scan and load it anytime. That's interesting if " +
@@ -68,7 +69,9 @@ public class HelpWindow extends JFrame {
 		"After you have scanned a new project it can be saved by clicking <i>Project->Save Project</i>. " + FolderGraph.PROGRAM_NAME + " saves all collected " +
 		"data in a file and compress it.<br>To load a saved project use <i>Project->Open Project</i>.<br>It is possible, that the fomrat of the " +
 		"saved data will changed in the future, so it's not shure for coming versions to open saved data from this version.<br><br>" +
-		"<u><b><i>5. What should I do when a \"Out of Memory-Exception\" occures?</u></b></i><br>" +
+		"<u><b><i>What happens with Links?</u></b></i><br>" +
+		"If a File is a Link it will be ignored while scanning.<br><br>" +
+		"<u><b><i>6. What should I do when a \"Out of Memory-Exception\" occures?</u></b></i><br>" +
 		FolderGraph.PROGRAM_NAME + " is a program written in Java. So it runs only in the Java-Virtual-Machin (JVM). The JVM does not use all your mermory, " +
 		"so large scans (f.e. a whole system) can be to big for the memory the JVM has reserved for the program. The script-files " +
 		"which are starting the program has allready some settings to start the JVM with more memory. To enlarge it, please edit the " +

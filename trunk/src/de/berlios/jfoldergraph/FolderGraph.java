@@ -57,13 +57,15 @@ public class FolderGraph {
 	/**
 	 * Should be used to get the Version Suffox like "alpha" or "beta"
 	 */
-	public static final String VERSION_SUFFIX = "beta 2";
+	public static final String VERSION_SUFFIX = "beta 4 (prebuild from SVN)";
 
 	/**
-	 * Entey-Methode for the JFolderGraph
+	 * Entry-Methode for the JFolderGraph
 	 * @param args Command-Line Parameters (not used at the moment)
 	 */
 	public static void main(String[] args) {
+		
+		System.out.println(PROGRAM_NAME + "  " + VERSION_MAJOR + "." + VERSION_MINOR + " " + VERSION_SUFFIX);
 		
 		controller = new FolderGraphController();
 		mainWindow = new FolderGraphWindow();
