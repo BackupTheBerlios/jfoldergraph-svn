@@ -20,18 +20,9 @@
 package de.berlios.jfoldergraph.gui.piechart;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
-import java.text.DecimalFormat;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PiePlot;
-import org.jfree.data.general.DefaultPieDataset;
 
 import de.berlios.jfoldergraph.datastruct.ScannedFile;
 import de.berlios.jfoldergraph.gui.FolderGraphWindow;
@@ -52,21 +43,15 @@ public class PieChartPanel extends GraphPanel {
 	 * Contains the currently displayed ScannedFile
 	 */
 	private ScannedFile currentDisplayedScannedFile;
-	
-	/**
-	 * The chart which will be displayed
-	 */
-	JFreeChart chart;
-	
-	/**
-	 * Contains the dataset for the chart
-	 */
-	private DefaultPieDataset dataset = new DefaultPieDataset();
+
+	private PieChartDrawingPanel drawPanel;
 	
 	/**
 	 * This contents the Option Panel with Options for the chart 
 	 */
 	private GraphOptionPanel graphOptionPanel;
+	
+	private PieDataSet pieData;
 	
 	/**
 	 * Consturctes the PiecChart-Panel with a reference to the
@@ -75,42 +60,10 @@ public class PieChartPanel extends GraphPanel {
 	 */
 	public PieChartPanel(FolderGraphWindow mainWindow) {
 		super(mainWindow);
+		pieData = new PieDataSet();
 		createGUI();
 	}
 	
-	
-	/**
-     * Creates the Chart
-     * @param dataset The dataset for the chart
-     * @return The chart
-     */
-    private JFreeChart createChart(DefaultPieDataset dataset) {
-        chart = ChartFactory.createPieChart(
-            "Folder overview (PieChart)",  // chart title
-            dataset,             // data
-            false,               // include legend
-            true,
-            false
-        );
-        PiePlot plot = (PiePlot) chart.getPlot();
-        plot.setSectionOutlinesVisible(false);
-        plot.setLabelFont(new Font("SansSerif", Font.PLAIN, 12));
-        plot.setNoDataMessage("No data available");
-        plot.setCircular(true);
-        plot.setLabelGap(0.02);
-        return chart;
-        
-    }
-	
-	
-	/**
-	 * This creates the Panel which contains the chart
-	 * @return
-	 */
-	private JPanel createChartPanel() {
-		JFreeChart chart = createChart(dataset);
-		return new ChartPanel(chart);
-	}
 	
 	/**
 	 * Creates the GUI and the layout
@@ -118,7 +71,9 @@ public class PieChartPanel extends GraphPanel {
 	private void createGUI() {
 		this.setBorder(BorderFactory.createRaisedBevelBorder());
 		this.setLayout(new BorderLayout());
-		this.add(this.createChartPanel(), BorderLayout.CENTER);
+		drawPanel = new PieChartDrawingPanel();
+		drawPanel.setPieDataSet(pieData);
+		this.add(drawPanel, BorderLayout.CENTER);
 		graphOptionPanel = new GraphOptionPanel(this);
 		this.add(graphOptionPanel, BorderLayout.SOUTH);
 	}
@@ -148,12 +103,10 @@ public class PieChartPanel extends GraphPanel {
 	 * @see de.berlios.jfoldergraph.gui.GraphPanel#updateGraphView(de.berlios.jfoldergraph.datastruct.ScannedFile)
 	 */
 	public void updateGraphView(ScannedFile sf) {
-		chart.setTitle(sf.getFilename());
 		this.currentDisplayedScannedFile = sf;
 		enableButtons(true);
-		DecimalFormat df = new DecimalFormat("##0.#");
 		// Removing all data from Graph and getting actual data from the ScannedFile
-		dataset.clear();
+		pieData.removeAll();
 		Iterator<ScannedFile> it = sf.getSortedChildFiles(this.graphOptionPanel.getShowFiles());
 		// Init Ignored Items
 		double ignoredPercent = 0.00;
@@ -169,16 +122,16 @@ public class PieChartPanel extends GraphPanel {
 			}
 			if ((graphOptionPanel.getGroupType() == GraphOptionPanel.PERCENT && sfc.getPercentSize() >= graphOptionPanel.getMinSize()) || 
 					(graphOptionPanel.getGroupType() == GraphOptionPanel.BYTES && sfc.getSize() >= graphOptionPanel.getMinSize())) {
-				dataset.setValue(sfc.getFilename() + " " + type + " (" + sfc.getHumanReadableSISize() + ")  " 
-						+ df.format(sfc.getPercentSize()) + "%", sfc.getPercentSize());
+				pieData.addItem(sfc.getFilename() + " " + type, sfc.getPercentSize());
 			} else {
 				ignoredPercent = ignoredPercent + sfc.getPercentSize();
 				ignoredSize = ignoredSize + sfc.getSize();
 			}
 		}
 		if (ignoredPercent > 0) {
-			dataset.setValue("Grouped Items: (" + ignoredSize + ") " + df.format(ignoredPercent) + "%", ignoredPercent);
+			pieData.addItem("Grouped Items", ignoredPercent);
 		}
+		drawPanel.fireRepaint();
 	}
 
 }

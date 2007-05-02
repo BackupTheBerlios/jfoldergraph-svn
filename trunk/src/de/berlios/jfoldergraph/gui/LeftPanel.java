@@ -57,12 +57,11 @@ public abstract class LeftPanel extends JPanel {
 	
 	
 	/**
-	 * This method should be called to inform the List to udate
-	 * its view. It will be called after a new scan or when
-	 * entering a subdirectory
-	 * @param sf
+	 * This should be called to update the view of the fileList
+	 * @param root The root of the project
+	 * @param selected The selected file
 	 */
-	public abstract void updateListView(ScannedFile sf);
+	public abstract void updateListView(ScannedFile root, ScannedFile selected);
 	
 	
 	/**

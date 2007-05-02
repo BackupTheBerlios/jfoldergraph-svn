@@ -51,6 +51,11 @@ public class TreeViewPanel extends LeftPanel {
 	ScannedFile currentSelectedFile;
 	
 	/**
+	 * The TreeModel for the Tree
+	 */
+	JFGTreeModel treeModel;
+	
+	/**
 	 * Contains the fileInfoPanel which shows some informationsa
 	 * about the selected file
 	 */
@@ -76,7 +81,7 @@ public class TreeViewPanel extends LeftPanel {
 	 */
 	private void createGUI() {
 		this.setLayout(new BorderLayout());
-		JFGTreeModel treeModel = new JFGTreeModel(getMainWindow().getRootOfTheProject());
+		treeModel = new JFGTreeModel(getMainWindow().getRootOfTheProject());
 		TreeViewCellRenderer cellRenderer = new TreeViewCellRenderer();
 		jtree = new JTree(treeModel);
 		jtree.setCellRenderer(cellRenderer);
@@ -147,17 +152,21 @@ public class TreeViewPanel extends LeftPanel {
 	 * @param path
 	 */
 	private void treeSelectionChanged(TreePath path) {
-		ScannedFile sf = (ScannedFile) path.getLastPathComponent();
-		if (sf.isDirectory()) {
-			this.currentSelectedFile = sf;
-			this.getMainWindow().updateGraphView(sf);
-		} else {
-			if (sf.getParent() != null) {
-				this.currentSelectedFile = sf.getParent();
-				this.getMainWindow().updateGraphView(sf.getParent());
+		if (path != null && path.getLastPathComponent() != null) {
+			ScannedFile sf = (ScannedFile) path.getLastPathComponent();
+			if (sf.isDirectory()) {
+				this.currentSelectedFile = sf;
+				this.getMainWindow().updateGraphView(sf);
+			} else {
+				if (sf.getParent() != null) {
+					this.currentSelectedFile = sf.getParent();
+					this.getMainWindow().updateGraphView(sf.getParent());
+				}
 			}
+			fileInfoPanel.setDisplayedScannedFile(sf);
+		} else {
+			fileInfoPanel.setDisplayedScannedFile((ScannedFile)treeModel.getRoot());
 		}
-		fileInfoPanel.setDisplayedScannedFile(sf);
 	}
 	
 	
@@ -166,9 +175,17 @@ public class TreeViewPanel extends LeftPanel {
 	 * ScannedFile
 	 * @see de.berlios.jfoldergraph.gui.LeftPanel#updateListView(de.berlios.jfoldergraph.datastruct.ScannedFile)
 	 */
-	public void updateListView(ScannedFile sf) {
-		TreePath treePath = new TreePath(sf.getPathFromRoot());
-		jtree.setSelectionPath(treePath);
+	public void updateListView(ScannedFile root, ScannedFile sf) {
+		if (sf != null) {
+			if (root == treeModel.getRoot()) {
+				TreePath treePath = new TreePath(sf.getPathFromRoot());
+				jtree.setSelectionPath(treePath);
+			} else {
+				jtree.setModel(new JFGTreeModel(root));
+				TreePath treePath = new TreePath(root.getPathFromRoot());
+				jtree.setSelectionPath(treePath);
+			}
+		}
 	}
 
 }

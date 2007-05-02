@@ -214,9 +214,9 @@ public class FolderGraphWindow extends JFrame {
 			break;
 		}
 		if (currentDisplayedFile != null) {
-			leftPanelContainer.updateListView(currentDisplayedFile);
+			leftPanelContainer.updateListView(this.getRootOfTheProject(), currentDisplayedFile);
 		} else {
-			leftPanelContainer.updateListView(this.getRootOfTheProject());
+			leftPanelContainer.updateListView(this.getRootOfTheProject(), this.getRootOfTheProject());
 		}
 		panel.add(leftPanelContainer, BorderLayout.CENTER);
 		panel.validate();
@@ -377,7 +377,7 @@ public class FolderGraphWindow extends JFrame {
 	 */
 	private void updateListView(ScannedFile sf) {
 		if (sf != null) {
-			leftPanelContainer.updateListView(sf);
+			leftPanelContainer.updateListView(this.getRootOfTheProject(), sf);
 		}
 	}
 

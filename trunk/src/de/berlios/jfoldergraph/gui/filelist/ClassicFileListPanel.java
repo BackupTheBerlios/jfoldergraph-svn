@@ -158,7 +158,7 @@ public class ClassicFileListPanel extends LeftPanel {
 		fileListShowFiles.setEnabled(false);
 		fileListShowFiles.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateListView(currentDisplayedFile);
+				updateListView(getMainWindow().getRootOfTheProject(), currentDisplayedFile);
 				// updateListView(getMainWindow().getCurrentDisplayedScannedFiles());
 			}
 		});
@@ -289,23 +289,25 @@ public class ClassicFileListPanel extends LeftPanel {
 	 * Updates the the List on the display.
 	 * @param sf The ScannedFile which should be displayed
 	 */
-	public void updateListView(ScannedFile sf) {
-		this.enableButtons(true);
-		this.currentInfoPanel.setDisplayedScannedFile(sf);
-		this.currentDirectory.setText(sf.getPath());
-		this.currentDisplayedFile = sf;
-		// Removing all entries of the list
-		FileListModel model = (FileListModel) fileList.getModel();
-		model.removeAllElements();
-		// adding the entries to the lists
-		Iterator<ScannedFile> it = sf.getSortedChildFiles(fileListShowFiles.isSelected());
-		while (it.hasNext()) {
-			ScannedFile sfc = it.next();
-			model.addElement(sfc);
+	public void updateListView(ScannedFile root, ScannedFile sf) {
+		if (sf != null) {
+			this.enableButtons(true);
+			this.currentInfoPanel.setDisplayedScannedFile(sf);
+			this.currentDirectory.setText(sf.getPath());
+			this.currentDisplayedFile = sf;
+			// Removing all entries of the list
+			FileListModel model = (FileListModel) fileList.getModel();
+			model.removeAllElements();
+			// adding the entries to the lists
+			Iterator<ScannedFile> it = sf.getSortedChildFiles(fileListShowFiles.isSelected());
+			while (it.hasNext()) {
+				ScannedFile sfc = it.next();
+				model.addElement(sfc);
+			}
+			// Now notify the FileList
+			model.fireEntryChanged();
+			this.openFolderButton.setEnabled(false);
 		}
-		// Now notify the FileList
-		model.fireEntryChanged();
-		this.openFolderButton.setEnabled(false);
 	}
 
 
